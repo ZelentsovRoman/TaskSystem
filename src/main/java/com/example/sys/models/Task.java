@@ -25,7 +25,7 @@ public class Task {
     @OneToOne
     @JoinColumn(name = "employee_id_fk",referencedColumnName = "employee_id")
     private Employee employeeId;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "status",referencedColumnName = "status_id")
     private Status statusId;
 

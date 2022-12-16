@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -38,13 +37,6 @@ public class Controller {
         String json = gson.toJson(list);
         return json;
     }
-    @GetMapping("/getLast")
-    public String getLast(){
-        Task task = new Task();
-        task.setTaskId(taskRepository.getNextValMySequence());
-        String json = new Gson().toJson(task);
-        return json;
-    }
     @GetMapping("/allEmployee")
     public String getEmployee(){
         ArrayList<Employee> list = employeeRepository.findAllByOrderByLastName();
@@ -65,11 +57,12 @@ public class Controller {
         return json;
     }
     @PostMapping("/saveTask")
-    public ResponseEntity saveTask(@RequestBody String json){
+    public String saveTask(@RequestBody String json){
         Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create();
         Task task = gson.fromJson(json, Task.class);
-        taskRepository.save(task);
-        return ResponseEntity.ok(HttpStatus.OK);
+        String js = new Gson().toJson(taskRepository.findFirstByDescriptionAndDateAndDateStartAndDateEndAndEmployeeIdAndStatusIdOrderByTaskId(
+                task.getDescription(),task.getDate(),task.getDateStart(),task.getDateEnd(),task.getEmployeeId(),task.getStatusId()));
+        return js;
     }
     @PostMapping("/saveSubtask/{id}")
     public ResponseEntity saveSubtasks( @PathVariable("id") int id,@RequestBody String json){

@@ -16,7 +16,7 @@
             <date-picker v-model:value="date" type="datetime" range class="date-picker" value-type="format"
                          format="DD-MM-YYYY HH:mm:ss" aria-required="true"></date-picker>
             <span class="text">Описание</span>
-            <textarea class="input description" type="text" v-model="this.task.description" required></textarea>
+            <textarea class="input description" type="text" v-model="this.task.description"></textarea>
 
             <div class="subtasks">
               <div>
@@ -69,7 +69,6 @@ export default {
         dateEnd: '',
         employeeId: '',
         description: '',
-        taskId: '',
         statusId: '',
         date: ''
       },
@@ -85,12 +84,6 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.employee = data;
-        })
-    fetch("/api/getLast")
-        .then((response) => response.json())
-        .then((data) => {
-          this.last = data;
-          this.task.taskId = this.last.taskId + 1
         })
     fetch("/api/getStatuses")
         .then((response) => response.json())
@@ -109,7 +102,7 @@ export default {
       this.subtasks.push({
         description: '',
         value: false,
-        taskId: this.task.taskId
+        taskId:''
       })
     },
     async submit() {
@@ -126,7 +119,6 @@ export default {
         this.task.statusId = this.stat[1]
       } else this.task.statusId = this.stat[0]
       this.task = JSON.stringify(this.task, null, 2)
-      this.subtasks = JSON.stringify(this.subtasks, null, 2)
       this.$router.push({ path: '/' })
       await fetch("/api/saveTask", {
             body: this.task,
@@ -135,14 +127,22 @@ export default {
             },
             method: "post"
           }
-      ).then( await fetch("/api/saveSubtask", {
-            body: this.subtasks,
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            method: "post"
-          }
-      ))
+      ).then(async (data) => {
+        this.last = data;
+        this.subtasks.forEach(function (item) {
+          item.taskId = this.last.taskId
+        })
+        this.subtasks = JSON.stringify(this.subtasks, null, 2)
+        await fetch("/api/saveSubtask", {
+              body: this.subtasks,
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              method: "post"
+            }
+        )
+      })
+      document.location.reload(true)
     }
   }
 }

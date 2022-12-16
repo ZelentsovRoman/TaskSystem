@@ -31,7 +31,7 @@ export default {
         name:'',
         lastName:'',
         company:'',
-        privileges: 'admin'
+        privileges: ''
       },
       company:{
         name:''

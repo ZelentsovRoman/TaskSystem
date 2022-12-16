@@ -26,7 +26,7 @@
             <date-picker v-model:value="date" type="datetime" range class="date-picker" value-type="format"
                          format="DD-MM-YYYY HH:mm:ss" aria-required="true"></date-picker>
             <span class="text">Описание</span>
-            <textarea class="input description" type="text" v-model="description" required></textarea>
+            <textarea class="input description" type="text" v-model="description"></textarea>
             <div class="subtasks">
               <div>
                 <span class="text">Подзадачи</span>
@@ -123,6 +123,7 @@ export default {
             method: "post"
           }
       )
+      document.location.reload(true)
     },
     changeColor(status) {
       if (status == 'Выполняется') {
@@ -179,6 +180,7 @@ export default {
             method: "post"
           }
       ))
+      document.location.reload(true)
     }
   }
 }

@@ -15,9 +15,6 @@
           <span class="text">Пароль</span>
           <input class="input" type="password" v-model="user.password" required>
           <button class="btn" type="submit">Зарегистрировать</button>
-          <span>{{ arremployee }}</span>
-          <span>{{ company }}</span>
-          <span>{{ user }}</span>
         </form>
       </div>
     </div>

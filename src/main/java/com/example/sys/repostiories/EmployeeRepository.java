@@ -7,6 +7,6 @@ import java.util.ArrayList;
 
 public interface EmployeeRepository extends CrudRepository<Employee,Integer> {
     ArrayList<Employee> findAllByOrderByLastName();
-    ArrayList<Employee> findAllByCompanyIs(int id);
+    ArrayList<Employee> findAllByCompany(int id);
     Employee findFirstByNameAndLastNameOrderByEmployeeIdDesc(String name, String lastName);
 }
