@@ -60,6 +60,7 @@ public class Controller {
     public String saveTask(@RequestBody String json){
         Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create();
         Task task = gson.fromJson(json, Task.class);
+        taskRepository.save(task);
         String js = new Gson().toJson(taskRepository.findFirstByDescriptionAndDateAndDateStartAndDateEndAndEmployeeIdAndStatusIdOrderByTaskId(
                 task.getDescription(),task.getDate(),task.getDateStart(),task.getDateEnd(),task.getEmployeeId(),task.getStatusId()));
         return js;
