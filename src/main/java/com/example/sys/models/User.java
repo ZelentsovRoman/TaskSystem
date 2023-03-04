@@ -8,14 +8,14 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private int userId;
+    protected int userId;
+    @OneToOne
+    @JoinColumn(name = "employee_id_fk", referencedColumnName = "employee_id")
+    protected Employee employee;
     @Column(name = "login")
     private String login;
     @Column(name = "password")
     private String password;
-    @OneToOne
-    @JoinColumn(name = "employee_id_fk", referencedColumnName = "employee_id")
-    private Employee employee;
 
     public Employee getEmployee() {
         return employee;

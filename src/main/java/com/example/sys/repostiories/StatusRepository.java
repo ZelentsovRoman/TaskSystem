@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.ArrayList;
 
-public interface StatusRepository extends CrudRepository<Status,Integer> {
+public interface StatusRepository extends CrudRepository<Status, Integer> {
     ArrayList<Status> findAll();
 }

@@ -1,5 +1,6 @@
 @import "home";
-form{
+
+form {
   display: flex;
   flex-direction: column;
   background-color: rgba(255, 255, 255, 0.65);
@@ -10,17 +11,15 @@ form{
   width: 100%;
   max-width: 30rem;
 }
-.name,.lastName,.priveleges,.login,.password{
+
+.name, .lastName, .login, .password {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
-.text{
-  color: black;
-  margin-left: 1rem;
-  margin-bottom: 5px;
-}
-.input{
+
+.selector {
+  -webkit-appearance: none;
   margin-bottom: 2rem;
   border-radius: 5px;
   height: calc(40px - 2 * 1px);
@@ -30,9 +29,34 @@ form{
   border: rgba(0, 16, 61, 0.12);
   border-width: 1px;
   border-style: solid;
-  padding: 12px ;
+  padding-left: 12px;
+  overflow: auto;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
-.btn{
+
+.text {
+  color: black;
+  margin-left: 1rem;
+  margin-bottom: 5px;
+}
+
+.input {
+  margin-bottom: 2rem;
+  border-radius: 5px;
+  height: calc(40px - 2 * 1px);
+  margin-left: 1rem;
+  margin-right: 1rem;
+  width: auto;
+  border: rgba(0, 16, 61, 0.12);
+  border-width: 1px;
+  border-style: solid;
+  padding: 12px;
+}
+
+.btn {
   background-color: #334155;
   border-radius: 5px;
   border: rgba(0, 16, 61, 0.12);
@@ -41,12 +65,14 @@ form{
   height: calc(40px - 2 * 1px);
   color: white;
 }
-.head{
+
+.head {
   color: black;
   margin-left: 1rem;
   margin-bottom: 2rem;
   text-align: center;
 }
-.home{
+
+.home {
   position: relative;
 }

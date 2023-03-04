@@ -1,5 +1,5 @@
 <template>
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+  <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet">
   <div class="app">
     <!-- Sidebar -->
     <Sidebar/>
@@ -46,6 +46,7 @@ button {
 
 .app {
   display: flex;
+
   main {
     flex: 1 1 0;
     padding: 2rem;

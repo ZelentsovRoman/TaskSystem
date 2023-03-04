@@ -8,7 +8,7 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "employee_id")
-    private int employeeId;
+    protected int employeeId;
     @Column(name = "name")
     private String name;
     @Column(name = "last_name")

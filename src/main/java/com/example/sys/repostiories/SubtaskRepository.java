@@ -10,9 +10,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface SubtaskRepository extends CrudRepository<Subtask,Integer> {
+public interface SubtaskRepository extends CrudRepository<Subtask, Integer> {
     ArrayList<Subtask> findAllByTaskId(int id);
+
     List<Subtask> findAll();
+
     @Modifying
     @Transactional
     @Query("delete from subtasks b where b.taskId=:task_id_fk")

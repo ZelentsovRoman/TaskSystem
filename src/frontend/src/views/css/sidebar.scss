@@ -20,7 +20,8 @@ aside {
   .logo {
     margin-bottom: 1rem;
     position: static;
-    img ,span{
+
+    img, span {
       display: flex;
       margin-bottom: 15px;
       width: 100px;
@@ -28,6 +29,7 @@ aside {
       margin: 0 auto;
       font-size: 100px;
     }
+
     .text {
       opacity: 0;
       margin-left: 4rem;
@@ -36,31 +38,6 @@ aside {
     }
   }
 
-  .menu-toggle-wrap {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1rem;
-
-    position: relative;
-    top: 0;
-    transition: 0.2s ease-in-out;
-
-    .menu-toggle {
-      transition: 0.2s ease-in-out;
-      .material-icons {
-        font-size: 2rem;
-        color: var(--light);
-        transition: 0.2s ease-out;
-      }
-
-      &:hover {
-        .material-icons {
-          color: var(--primary);
-          transform: translateX(0.5rem);
-        }
-      }
-    }
-  }
 
   h3, .button .text {
     opacity: 0;
@@ -84,11 +61,13 @@ aside {
       margin-bottom: 15px;
       transition: 0.2s ease-in-out;
       padding: 0.5rem 1rem;
+
       .material-icons {
         font-size: 2rem;
         color: var(--light);
         transition: 0.2s ease-in-out;
       }
+
       .text {
         color: var(--primary-alt);
         transition: 0.2s ease-in-out;
@@ -101,7 +80,7 @@ aside {
           color: var(--primary);
         }
 
-        .img{
+        .img {
 
         }
 
@@ -148,6 +127,7 @@ aside {
         margin-right: 1rem;
       }
     }
+
     .logo {
       .text {
         opacity: 1;
@@ -163,4 +143,7 @@ aside {
     position: absolute;
     z-index: 99;
   }
+ .title{
+   margin-left: 2rem;
+ }
 }

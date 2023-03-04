@@ -3,64 +3,85 @@
     <div class="main">
       <div class="home">
         <form @submit="submit">
-            <h1 class="head">Добавление нового сотрудника</h1>
-            <span class="text">Имя</span>
-            <input class="input" type="text" required v-model="arremployee.name">
-            <span class="text">Фамилия</span>
-            <input class="input" type="text" required v-model="arremployee.lastName">
-            <span class="text">Права доступа</span>
-            <input class="input" type="text" required v-model="arremployee.privileges">
-            <span class="text">Логин</span>
-            <input class="input" type="text" required v-model="user.login">
-            <span class="text">Пароль</span>
-            <input class="input" type="password" required v-model="user.password">
-            <button class="btn" type="submit">Добавить</button>
+          <h1 class="head">Добавление нового сотрудника</h1>
+          <span class="text">Имя</span>
+          <input v-model="arremployee.name" class="input" required type="text">
+          <span class="text">Фамилия</span>
+          <input v-model="arremployee.lastName" class="input" required type="text">
+          <span class="text">Права доступа</span>
+          <select v-model="arremployee.privileges" class="selector" required>
+            <option>User</option>
+            <option>Admin</option>
+          </select>
+          <span class="text">Логин</span>
+          <input v-model="user.login" class="input" required type="text">
+          <span class="text">Пароль</span>
+          <input v-model="user.password" class="input" required type="password">
+          <span v-if="text.length>0" class="error">{{ text }}</span>
+          <button class="btn" type="submit">Добавить</button>
         </form>
-        </div>
       </div>
+    </div>
   </main>
 </template>
 <style lang="scss" scoped>
 @import "./src/views/css/employee.scss";
+
+.error {
+  color: red;
+  margin-left: 1rem;
+  margin-bottom: 5px;
+}
 </style>
 <script>
+import router from "@/router";
+
 export default {
-  data(){
-    return  {
-      arremployee:{
-        name:'',
-        lastName:'',
-        company:'',
+  data() {
+    return {
+      arremployee: {
+        name: '',
+        lastName: '',
+        company: '',
         privileges: ''
       },
-      company:{
-        name:''
+      company: {
+        name: ''
       },
-      user:{
-        login:'',
-        password:'',
-        employee:''
+      user: {
+        login: '',
+        password: '',
+        employee: ''
       },
+      text: ''
     }
   },
-  methods:{
-    async submit() {
-      fetch("/api/getStatuses")
-          .then((response) => response.json())
-          .then((data) => {
-            this.stat = data;
-          })
-      this.company=JSON.stringify(this.company,null,2)
-      var company = await fetch("/api/saveCompany", {
-            body: this.company,
+  methods: {
+    async submit(e) {
+      e.preventDefault()
+      this.user.employee = this.arremployee
+      this.arremployee.company = this.company
+      var s1 = JSON.stringify(this.user, null, 2)
+      var checkUser = await fetch("/api/findUser", {
+            body: s1,
             headers: {
               'Content-Type': 'application/json'
             },
             method: "post"
           }
       )
-      this.arremployee.company=company
-      this.arremployee=JSON.stringify(this.arremployee,null,2)
+      const check = await checkUser.json()
+      if (check !== null) {
+        if (check.login === this.user.login) {
+          this.text = 'Пользователь с таим логином уже существует'
+        } else {
+          this.save()
+        }
+      } else this.save()
+    },
+    async save() {
+      this.arremployee.company = JSON.parse(localStorage.getItem('user')).employee.company
+      this.arremployee = JSON.stringify(this.arremployee, null, 2)
       var emp = await fetch("/api/saveEmployee", {
             body: this.arremployee,
             headers: {
@@ -69,17 +90,17 @@ export default {
             method: "post"
           }
       )
-      this.user.employee=emp
-      this.user=JSON.stringify(this.user,null,2)
+      this.user.employee = await emp.json()
+      this.user = JSON.stringify(this.user, null, 2)
       await fetch("/api/saveUser", {
-            body: this.arremployee,
+            body: this.user,
             headers: {
               'Content-Type': 'application/json'
             },
             method: "post"
           }
       )
-      this.$router.push("/tasks")
+      router.push({path: '/'})
     }
   }
 }

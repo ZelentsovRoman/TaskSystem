@@ -4,10 +4,10 @@
     <div class="main">
       <div class="home">
         <div v-if="tasks.length!==0">
-          <div class="home-tab" v-for="item in tasks" :key="item.taskId" @click="clickTask(item.taskId,item)">
+          <div v-for="item in tasks" :key="item.taskId" class="home-tab" @click="clickTask(item.taskId,item)">
             <div class="left">
               <div class="col1">
-                <span class="tab-num">#{{item.taskId}}</span>
+                <span class="tab-num">#{{ item.taskId }}</span>
               </div>
               <div class="col1">
                 <span class="tab-desc">Описание:</span>
@@ -15,9 +15,9 @@
                 <span class="tab-status">Статус:</span>
               </div>
               <div class="col2">
-                <span class="desc" v-if="item.description===''">Отсутствует</span>
-                <span class="desc" v-else>{{ item.description }}</span>
-                <span class="date">{{ item.date.substring(0,10) }}</span>
+                <span v-if="item.description===''" class="desc">Отсутствует</span>
+                <span v-else class="desc">{{ item.description }}</span>
+                <span class="date">{{ item.date.substring(0, 10) }}</span>
                 <span :class="changeColor(item.statusId.status)" name="status">{{ item.statusId.status }}</span>
               </div>
             </div>
@@ -52,32 +52,59 @@
 .green {
   color: green;
 }
-.else{
+
+.else {
   color: gray;
   margin-top: 6rem;
-  h1{
+
+  h1 {
     font-size: 20pt;
   }
 }
 </style>
 <script>
+import router from "@/router";
+
 export default {
   name: "testNow",
   data() {
     return {
       tasks: '',
-      task:''
+      task: ''
     }
   },
   mounted() {
-    fetch("/api/allTasks")
-        .then((response) => response.json())
-        .then((data) => {
-          this.tasks = data;
-          if(this.tasks.description===null){
-            this.tasks.description="Отсутствует"
-          }
-        })
+    if (JSON.parse(localStorage.getItem('user')).employee.privileges === 'Admin') {
+      fetch("/api/TaskForAdmin", {
+        body: localStorage.getItem('user'),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: "post"
+      })
+          .then((response) => response.json())
+          .then((data) => {
+            this.tasks = data;
+            if (this.tasks.description === null) {
+              this.tasks.description = "Отсутствует"
+            }
+          })
+    } else {
+      fetch("/api/TaskForUser", {
+        body: localStorage.getItem('user'),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: "post"
+      })
+          .then((response) => response.json())
+          .then((data) => {
+            this.tasks = data;
+            if (this.tasks.description === null) {
+              this.tasks.description = "Отсутствует"
+            }
+          })
+    }
   },
   methods: {
     changeColor(status) {
@@ -85,10 +112,10 @@ export default {
         return "red";
       } else return "green"
     },
-    clickTask(taskId, item){
-      this.$router.push({
-        path: "/task/"+item.taskId,
-        params:{
+    clickTask(taskId, item) {
+      router.push({
+        path: "/task/" + item.taskId,
+        params: {
           employee: item
         }
       });

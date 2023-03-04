@@ -2,14 +2,17 @@ package com.example.sys.models;
 
 import jakarta.persistence.*;
 
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
 
 @Entity(name = "tasks")
 @Table(name = "tasks", schema = "sys", catalog = "system")
 public class Task {
+    @ManyToOne
+    @JoinColumn(name = "employee_id_fk", referencedColumnName = "employee_id")
+    protected Employee employeeId;
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    protected User userId;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "task_id")
@@ -22,13 +25,9 @@ public class Task {
     private Timestamp dateStart;
     @Column(name = "date_end")
     private Timestamp dateEnd;
-    @OneToOne
-    @JoinColumn(name = "employee_id_fk",referencedColumnName = "employee_id")
-    private Employee employeeId;
     @ManyToOne
-    @JoinColumn(name = "status",referencedColumnName = "status_id")
+    @JoinColumn(name = "status", referencedColumnName = "status_id")
     private Status statusId;
-
 
     public Status getStatusId() {
         return statusId;
@@ -85,5 +84,13 @@ public class Task {
 
     public void setEmployeeId(Employee employeeId) {
         this.employeeId = employeeId;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
 }

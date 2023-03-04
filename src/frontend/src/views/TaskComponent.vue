@@ -3,44 +3,48 @@
     <div class="main">
       <div class="home">
         <div class="home-tab">
-          <form @submit="submit">
+          <form>
             <h1>Задача {{ this.task.taskId }}</h1>
             <div class="date">
               <div class="column1">
                 <span class="text">Статус</span>
                 <span class="text">Дата создания</span>
+                <span class="text">Создано</span>
               </div>
               <div class="column2">
                 <span :class="changeColor(status)" name="status">{{ status }}</span>
-                <span class="text">{{ this.var.substring(0, 10) }}</span>
+                <span class="text">{{ this.task.date.substring(0, 10) }}</span>
+                <span class="text">{{ name }} {{ lastName }}</span>
               </div>
             </div>
             <span class="text">Исполнитель</span>
-            <select v-model="selectedEmployee" class="selector" required>
+            <select v-model="selectedEmployee" :disabled="disable" class="selector" required>
               <option v-for="user in employee" :key="user.employeeId" :value="user">{{ user.name }} {{
                   user.lastName
                 }}
               </option>
             </select>
             <span class="text">Дата начала и окончания</span>
-            <date-picker v-model:value="date" type="datetime" range class="date-picker" value-type="format"
-                         format="DD-MM-YYYY HH:mm:ss" aria-required="true"></date-picker>
+            <date-picker v-model:value="date" :disabled="disable" aria-required="true" class="date-picker" format="DD-MM-YYYY HH:mm:ss"
+                         range type="datetime" value-type="format"></date-picker>
             <span class="text">Описание</span>
-            <textarea class="input description" type="text" v-model="description"></textarea>
+            <textarea v-model="task.description" class="input description" type="text"></textarea>
             <div class="subtasks">
               <div>
                 <span class="text">Подзадачи</span>
-                <div v-for="(subtask, subtaskId) in subtasks" :key="subtask.subtaskId">
+                <div v-for="(subtask, subtaskId) in subtasks" v-bind:key="subtask.subtaskId">
                   <input v-model="subtask.value" type="checkbox">
                   <input v-model="subtask.description" type="text">
-                  <button class="material-icons" @click="deleteSubtask(subtaskId)" name="delete">clear</button>
+                  <button v-if="priveleges==='Admin'" class="material-icons" name="delete"
+                          @click="deleteSubtask(subtaskId)">clear
+                  </button>
                 </div>
-                <button @click="addSubtask" type="button" name="add">Добавить подзадачу</button>
+                <button name="add" type="button" @click="addSubtask" v-if="priveleges==='Admin'">Добавить подзадачу</button>
               </div>
               <div class="buttons">
-                <button @click="navigate" class="back">Назад</button>
-                <button @click="deleteTask()" class="delete">Удалить</button>
-                <button type="submit">Сохранить</button>
+                <button class="back" @click="navigate">Назад</button>
+                <button v-if="priveleges==='Admin'" class="delete" @click="deleteTask">Удалить</button>
+                <button @click="submit">Сохранить</button>
               </div>
             </div>
           </form>
@@ -68,25 +72,40 @@ h1 {
 import DatePicker from 'vue-datepicker-next';
 import 'vue-datepicker-next/index.css';
 import 'vue-datepicker-next/locale/ru';
+import router from "@/router";
 
 export default {
   components: {DatePicker},
   data() {
     return {
       date: [],
-      task: '',
+      task: {
+        description: '',
+        statusId: '',
+        date: '',
+        userId: JSON.parse(localStorage.getItem('user'))
+      },
       employee: [],
-      selectedEmployee: [],
       subtasks: [],
+      selectedEmployee: [],
       status: '',
       description: '',
       stat: '',
       newTask: '',
-      var: ''
+      name: '',
+      lastName: ''
     }
   },
-  mounted() {
-    fetch("/api/allEmployee")
+  async mounted() {
+
+    await fetch("/api/allEmployee", {
+          body: JSON.stringify(this.task.userId, null, 2),
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          method: "post"
+        }
+    )
         .then((response) => response.json())
         .then((data) => {
           this.employee = data;
@@ -100,30 +119,35 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.task = data
-          this.var = this.task.date
+          this.name = this.task.userId.employee.name
+          this.lastName = this.task.userId.employee.lastName
           this.selectedEmployee = this.task.employeeId
           this.status = this.task.statusId.status
-          this.description = this.task.description
           this.date.push(this.task.dateStart, this.task.dateEnd)
-        })
-    fetch("/api/getSubtasks/" + this.$route.params.id)
-        .then((response) => response.json())
-        .then((data) => {
-          this.subtasks = data
-        })
+        }).then(
+        fetch("/api/getSubtasks/" + this.$route.params.id)
+            .then((response) => response.json())
+            .then((data) => {
+              this.subtasks = data
+            })
+    )
   },
   methods: {
-    async deleteTask() {
-      var id = this.task.taskId
-      this.$router.push({ path: '/' })
-      await fetch("/api/deleteTask/" + id, {
+    async deleteTask(e) {
+      e.preventDefault()
+      this.$router.push({path: '/'})
+      await fetch("/api/deleteTask/" + this.$route.params.id, {
             headers: {
               'Content-Type': 'application/json'
             },
             method: "post"
           }
-      )
-      document.location.reload(true)
+      ).then(async response => {
+        if (response.ok) {
+          location.reload()
+        }
+      })
+
     },
     changeColor(status) {
       if (status == 'Выполняется') {
@@ -131,7 +155,7 @@ export default {
       } else return "green"
     },
     navigate() {
-      this.$router.push({ path: '/' })
+      this.$router.push({path: '/'})
     },
     addSubtask() {
       this.subtasks.push({
@@ -143,44 +167,55 @@ export default {
     deleteSubtask(subtaskId) {
       this.subtasks.splice(subtaskId, 1)
     },
-    async submit() {
-      this.newTask = this.task
-      this.newTask.dateStart = this.date[0]
-      this.newTask.dateEnd = this.date[1]
-      this.newTask.description = this.description
-      this.newTask.employeeId = this.selectedEmployee
-      var count = 0;
-      var id = this.task.taskId
-      if (this.subtasks.length > 0) {
-        for (var element in this.subtasks) {
-          if (!this.subtasks[element].value) {
-            count++
+    async submit(e) {
+      e.preventDefault()
+      if (this.date[0] !== undefined && this.date[0]!==null) {
+        this.newTask = this.task
+        this.newTask.dateStart = this.date[0]
+        this.newTask.dateEnd = this.date[1]
+        this.newTask.employeeId = this.selectedEmployee
+        this.newTask.subtasks = this.subtasks
+        var count = 0;
+        if (this.subtasks.length > 0) {
+          for (var element in this.subtasks) {
+            if (!this.subtasks[element].value) {
+              count++
+            }
           }
-        }
-        if (count === 0) {
-          this.newTask.statusId = this.stat[1]
+          if (count === 0) {
+            this.newTask.statusId = this.stat[1]
+          } else this.newTask.statusId = this.stat[0]
         } else this.newTask.statusId = this.stat[0]
-      } else this.newTask.statusId = this.stat[0]
-      this.newTask = JSON.stringify(this.task, null, 2)
-      var s = JSON.stringify(this.subtasks, null, 2)
-      this.$router.push({ path: '/' })
-      await fetch("/api/saveSubtask/" + id, {
-            body: s,
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            method: "post"
+        this.newTask = JSON.stringify(this.task, null, 2)
+        router.push({path: '/'})
+        await fetch("/api/saveTask", {
+              body: this.newTask,
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              method: "post"
+            }
+        ).then(async response => {
+          if (response.ok) {
+            location.reload()
           }
-      )
-          .then(await fetch("/api/saveTask", {
-            body: this.newTask,
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            method: "post"
-          }
-      ))
-      document.location.reload(true)
+        })
+      } else {
+        alert('Выберите дату начала и окончания')
+      }
+    }
+  },
+  computed: {
+    priveleges: function () {
+      var priv = JSON.parse(localStorage.getItem('user')).employee.privileges
+      return priv
+    },
+    disable() {
+      var value = false
+      if (this.priveleges === 'User') {
+        value = true
+      }
+      return value
     }
   }
 }
