@@ -66,7 +66,7 @@ export default {
     async save() {
       router.push({path: '/'})
       var send = JSON.stringify(this.user, null, 2)
-      await fetch("/api/EditUser", {
+      await fetch("/api/editUser", {
             body: send,
             headers: {
               'Content-Type': 'application/json'

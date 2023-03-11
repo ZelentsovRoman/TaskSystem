@@ -42,7 +42,7 @@ public class Controller {
     @GetMapping("/allTasks")
     public String getTasks() {
         ArrayList<Task> list = taskRepository.findAllByOrderByTaskId();
-        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create();
+        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         String json = gson.toJson(list);
         return json;
     }
@@ -51,16 +51,17 @@ public class Controller {
     public String getTasksForAdmin(@RequestBody String json) {
         User user = new Gson().fromJson(json, User.class);
         ArrayList<Task> list = taskRepository.findByCompanyId(user.getEmployee().getCompany().getCompanyId());
-        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create();
+        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         String Jsonlist = gson.toJson(list);
         return Jsonlist;
     }
 
     @PostMapping("/TaskForUser")
+
     public String getTasksForUser(@RequestBody String json) {
         User user = new Gson().fromJson(json, User.class);
         ArrayList<Task> list = taskRepository.findAllByEmployeeIdOrderByTaskId(user.getEmployee());
-        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create();
+        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         String Jsonlist = gson.toJson(list);
         return Jsonlist;
     }
@@ -76,21 +77,21 @@ public class Controller {
     @GetMapping("/getTask/{id}")
     public String getTask(@PathVariable("id") int id) throws ParseException {
         Task task = taskRepository.findByTaskId(id);
-        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create();
+        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         String json = gson.toJson(task);
         return json;
     }
 
     @GetMapping("/getSubtasks/{id}")
     public String getSubtasks(@PathVariable("id") int id) throws ParseException {
-        ArrayList<Subtask> subtasks = subtaskRepository.findAllByTaskId(id);
+        ArrayList<Subtask> subtasks = subtaskRepository.findAllByTaskIdOrderBySubtaskId(id);
         String json = new Gson().toJson(subtasks);
         return json;
     }
 
     @PostMapping("/saveNewTask")
     public ResponseEntity saveNewTask(@RequestBody String json) {
-        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create();
+        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         Task task = gson.fromJson(json, Task.class);
         taskRepository.save(task);
         Task newtask = taskRepository.findFirstByDescriptionAndDateAndDateStartAndDateEndAndEmployeeIdAndStatusIdAndUserIdOrderByTaskId(
@@ -105,7 +106,7 @@ public class Controller {
         for (Subtask subtask : subtasks) {
             subtask.setTaskId(newtask.getTaskId());
         }
-        ArrayList<Subtask> fromDB = subtaskRepository.findAllByTaskId(newtask.getTaskId());
+        ArrayList<Subtask> fromDB = subtaskRepository.findAllByTaskIdOrderBySubtaskId(newtask.getTaskId());
         ArrayList<Integer> ids = new ArrayList<>();
         for (Subtask sub : subtasks) {
             sub.setTaskId(newtask.getTaskId());
@@ -125,7 +126,7 @@ public class Controller {
 
     @PostMapping("/saveTask")
     public ResponseEntity saveTask(@RequestBody String json) {
-        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy HH:mm:ss").create();
+        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         Task task = gson.fromJson(json, Task.class);
         taskRepository.save(task);
         JSONObject obj = new JSONObject(json);
@@ -135,7 +136,7 @@ public class Controller {
         for (int i = 0; i < arr.length(); i++) {
             subtasks.add(new Gson().fromJson(arr.get(i).toString(), Subtask.class));
         }
-        ArrayList<Subtask> fromDB = subtaskRepository.findAllByTaskId(task.getTaskId());
+        ArrayList<Subtask> fromDB = subtaskRepository.findAllByTaskIdOrderBySubtaskId(task.getTaskId());
         ArrayList<Integer> ids = new ArrayList<>();
         for (Subtask sub : subtasks) {
             ids.add(sub.getSubtaskId());
@@ -196,7 +197,7 @@ public class Controller {
         return HttpStatus.OK;
     }
 
-    @PostMapping("/EditUser")
+    @PostMapping("/editUser")
     public HttpStatus editUser(@RequestBody String json) {
         User user = new Gson().fromJson(json, User.class);
         Employee employee = user.getEmployee();

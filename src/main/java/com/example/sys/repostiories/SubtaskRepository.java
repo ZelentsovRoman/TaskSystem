@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface SubtaskRepository extends CrudRepository<Subtask, Integer> {
-    ArrayList<Subtask> findAllByTaskId(int id);
+    ArrayList<Subtask> findAllByTaskIdOrderBySubtaskId(int id);
 
     List<Subtask> findAll();
 

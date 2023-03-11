@@ -13,8 +13,8 @@
               </option>
             </select>
             <span class="text">Дата начала и окончания</span>
-            <date-picker v-model:value="date" aria-required="true" class="date-picker" format="DD-MM-YYYY HH:mm:ss" range
-                         type="datetime" value-type="format"></date-picker>
+            <date-picker v-model:value="date" aria-required="true" class="date-picker" format="DD-MM-YYYY" range
+                         type="date" value-type="format"></date-picker>
             <span class="text">Описание</span>
             <textarea v-model="this.task.description" class="input description" type="text"></textarea>
 
@@ -120,7 +120,9 @@ export default {
         router.push({path: '/'})
         this.task.dateStart = this.date[0]
         this.task.dateEnd = this.date[1]
-        this.task.date = new Date()
+        var d = new Date()
+        this.task.date =  ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +
+            d.getFullYear();
         var count = 0;
         this.task.subtasks.forEach(function (item) {
           if (!item.value) {

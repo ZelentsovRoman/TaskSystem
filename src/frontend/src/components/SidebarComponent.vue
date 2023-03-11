@@ -35,7 +35,7 @@
       </router-link>
       <router-link v-if="!auth" class="button" to="/login">
         <span class="material-icons">login</span>
-        <span class="text">Войти</span>
+        <span class="text">Авторизация</span>
       </router-link>
       <div v-if="auth" class="button" @click="logout">
         <span class="material-icons">logout</span>

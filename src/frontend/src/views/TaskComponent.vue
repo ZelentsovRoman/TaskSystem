@@ -25,8 +25,8 @@
               </option>
             </select>
             <span class="text">Дата начала и окончания</span>
-            <date-picker v-model:value="date" :disabled="disable" aria-required="true" class="date-picker" format="DD-MM-YYYY HH:mm:ss"
-                         range type="datetime" value-type="format"></date-picker>
+            <date-picker v-model:value="date" :disabled="disable" aria-required="true" class="date-picker" format="DD-MM-YYYY"
+                         range type="date" value-type="format"></date-picker>
             <span class="text">Описание</span>
             <textarea v-model="task.description" class="input description" type="text"></textarea>
             <div class="subtasks">
@@ -154,8 +154,9 @@ export default {
         return "red"
       } else return "green"
     },
-    navigate() {
-      this.$router.push({path: '/'})
+    navigate(e) {
+      e.preventDefault()
+      router.push({path: '/'})
     },
     addSubtask() {
       this.subtasks.push({

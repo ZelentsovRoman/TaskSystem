@@ -22,7 +22,7 @@ public interface TaskRepository extends CrudRepository<Task, Integer> {
 
     @Modifying
     @Transactional
-    @Query("SELECT a from tasks a inner join employee e on e.employeeId = a.employeeId.employeeId inner join companies c on c.companyId = e.company.companyId where e.company.companyId=:company_id")
+    @Query("SELECT a from tasks a inner join employee e on e.employeeId = a.employeeId.employeeId inner join companies c on c.companyId = e.company.companyId where e.company.companyId=:company_id order by a.taskId")
     ArrayList<Task> findByCompanyId(@Param("company_id") int company_id);
 
     ArrayList<Task> findAllByEmployeeIdOrderByTaskId(Employee employee);

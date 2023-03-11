@@ -9,7 +9,7 @@
           <span class="text">Пароль</span>
           <input v-model=user.password class="input" required type="password">
           <span v-if="text.length>0" class="error">{{ text }}</span>
-          <button class="btn" type="submit">Зарегистрировать</button>
+          <button class="btn" type="submit">Войти</button>
         </form>
       </div>
     </div>
