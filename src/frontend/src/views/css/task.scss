@@ -17,13 +17,32 @@ form {
   flex-direction: column;
   border-radius: 15px;
   padding: 2rem;
+  .column1 {
+    display: flex;
+    flex-direction: column;
+    white-space: nowrap;
+  }
+
+  .column2 {
+    display: flex;
+    flex-direction: column;
+    //margin-left: 1rem;
+    overflow: hidden;
+    text-overflow: fade;
+    margin-right: 1rem;
+    width: available;
+    white-space: nowrap;
+
+    span[name="status"] {
+      margin-left: 1rem;
+    }
+  }
 }
 
 .date {
   span {
     margin-bottom: 2rem;
   }
-
   display: flex;
   flex-direction: row;
 }
@@ -109,20 +128,6 @@ button[name="add"] {
   }
 }
 
-.column1 {
-  display: flex;
-  flex-direction: column;
-}
-
-.column2 {
-  display: flex;
-  flex-direction: column;
-  margin-left: 2rem;
-
-  span[name="status"] {
-    margin-left: 1rem;
-  }
-}
 
 .selector {
   -webkit-appearance: none;
@@ -176,6 +181,7 @@ button[name="add"] {
   color: black;
   margin-left: 1rem;
   margin-bottom: 5px;
+  display: flex;
 }
 
 .input {
