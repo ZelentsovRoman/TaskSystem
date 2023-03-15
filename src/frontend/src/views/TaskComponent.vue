@@ -26,7 +26,7 @@
             </select>
             <span class="text">Дата начала и окончания</span>
             <date-picker v-model:value="date" :disabled="disable" aria-required="true" class="date-picker" format="DD-MM-YYYY"
-                         range type="date" value-type="format"></date-picker>
+                         range type="date" value-type="format" :disabled-date="disabledBeforeTodayAndWeekEnd" ></date-picker>
             <span class="text">Описание</span>
             <textarea v-model="task.description" class="input description" type="text"></textarea>
             <div class="subtasks">
@@ -133,6 +133,9 @@ export default {
     )
   },
   methods: {
+    disabledBeforeTodayAndWeekEnd(date) {
+      return date < new Date(new Date().setHours(0, 0, 0, 0)) || date.getDay()===0 || date.getDay()===6;
+    },
     async deleteTask(e) {
       e.preventDefault()
       this.$router.push({path: '/'})
@@ -208,8 +211,7 @@ export default {
   },
   computed: {
     priveleges: function () {
-      var priv = JSON.parse(localStorage.getItem('user')).employee.privileges
-      return priv
+      return JSON.parse(localStorage.getItem('user')).employee.privileges
     },
     disable() {
       var value = false

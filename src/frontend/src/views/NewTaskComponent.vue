@@ -14,7 +14,7 @@
             </select>
             <span class="text">Дата начала и окончания</span>
             <date-picker v-model:value="date" aria-required="true" class="date-picker" format="DD-MM-YYYY" range
-                         type="date" value-type="format"></date-picker>
+                         type="date" value-type="format" :disabled-date="disabledBeforeTodayAndWeekEnd"></date-picker>
             <span class="text">Описание</span>
             <textarea v-model="this.task.description" class="input description" type="text"></textarea>
 
@@ -101,6 +101,9 @@ export default {
         })
   },
   methods: {
+    disabledBeforeTodayAndWeekEnd(date) {
+      return date < new Date(new Date().setHours(0, 0, 0, 0)) || date.getDay()===0 || date.getDay()===6;
+    },
     navigate() {
       router.push({path: '/'})
     },
