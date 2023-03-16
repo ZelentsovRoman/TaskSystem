@@ -11,14 +11,14 @@
               </div>
               <div class="col1">
                 <span class="tab-desc">Описание:</span>
-                <span class="tab-date">Дата создания:</span>
+                <span class="tab-date">Приоритет</span>
                 <span class="tab-status">Статус:</span>
               </div>
               <div class="col2">
                 <span v-if="item.description===''" class="desc">Отсутствует</span>
                 <span v-else class="desc">{{ item.description }}</span>
-                <span class="date">{{ item.date.substring(0, 10) }}</span>
-                <span :class="changeColor(item.statusId.status)" name="status">{{ item.statusId.status }}</span>
+                <span :style="{'color': changeColorPriority(item.priority)}" name="status">{{ item.priority }}</span>
+                <span :style="{'color': changeColor(item.statusId.status)}" name="status">{{ item.statusId.status }}</span>
               </div>
             </div>
             <div class="right">
@@ -111,6 +111,13 @@ export default {
       if (status === 'Выполняется') {
         return "red";
       } else return "green"
+    },
+    changeColorPriority(priority) {
+      switch (priority){
+        case 'Низкий': return 'green';
+        case 'Средний': return 'orange';
+        case 'Высокий': return 'red';
+      }
     },
     clickTask(taskId, item) {
       router.push({

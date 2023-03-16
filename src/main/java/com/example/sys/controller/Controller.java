@@ -50,7 +50,14 @@ public class Controller {
     @PostMapping("/TaskForAdmin")
     public String getTasksForAdmin(@RequestBody String json) {
         User user = new Gson().fromJson(json, User.class);
-        ArrayList<Task> list = taskRepository.findByCompanyId(user.getEmployee().getCompany().getCompanyId());
+        ArrayList<Task> list = taskRepository.findAllByCompanyIdOrderByPriorityDescTaskIdAsc(user.getEmployee().getCompany().getCompanyId());
+        for(Task task: list){
+            switch (task.getPriority()){
+                case "1": task.setPriority("Низкий");break;
+                case "2": task.setPriority("Средний");break;
+                case "3": task.setPriority("Высокий");break;
+            }
+        }
         Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         String Jsonlist = gson.toJson(list);
         return Jsonlist;
@@ -60,7 +67,14 @@ public class Controller {
 
     public String getTasksForUser(@RequestBody String json) {
         User user = new Gson().fromJson(json, User.class);
-        ArrayList<Task> list = taskRepository.findAllByEmployeeIdOrderByTaskId(user.getEmployee());
+        ArrayList<Task> list = taskRepository.findAllByEmployeeIdOrderByPriorityDescTaskIdAsc(user.getEmployee());
+        for(Task task: list){
+            switch (task.getPriority()){
+                case "1": task.setPriority("Низкий");break;
+                case "2": task.setPriority("Средний");break;
+                case "3": task.setPriority("Высокий");break;
+            }
+        }
         Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         String Jsonlist = gson.toJson(list);
         return Jsonlist;
@@ -77,6 +91,11 @@ public class Controller {
     @GetMapping("/getTask/{id}")
     public String getTask(@PathVariable("id") int id) throws ParseException {
         Task task = taskRepository.findByTaskId(id);
+        switch (task.getPriority()){
+            case "1": task.setPriority("Низкий");break;
+            case "2": task.setPriority("Средний");break;
+            case "3": task.setPriority("Высокий");break;
+        }
         Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         String json = gson.toJson(task);
         return json;
@@ -93,9 +112,14 @@ public class Controller {
     public ResponseEntity saveNewTask(@RequestBody String json) {
         Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         Task task = gson.fromJson(json, Task.class);
+        switch (task.getPriority()){
+            case "Низкий": task.setPriority("1");break;
+            case "Средний": task.setPriority("2");break;
+            case "Высокий": task.setPriority("3");break;
+        }
         taskRepository.save(task);
-        Task newtask = taskRepository.findFirstByDescriptionAndDateAndDateStartAndDateEndAndEmployeeIdAndStatusIdAndUserIdOrderByTaskId(
-                task.getDescription(), task.getDate(), task.getDateStart(), task.getDateEnd(), task.getEmployeeId(), task.getStatusId(), task.getUserId());
+        Task newtask = taskRepository.findFirstByDescriptionAndDateAndDateStartAndDateEndAndEmployeeIdAndStatusIdAndPriorityAndUserIdOrderByTaskId(
+                task.getDescription(), task.getDate(), task.getDateStart(), task.getDateEnd(), task.getEmployeeId(), task.getStatusId(), task.getPriority(), task.getUserId());
         JSONObject obj = new JSONObject(json);
         JSONArray arr = obj.getJSONArray("subtasks");
 
@@ -128,9 +152,15 @@ public class Controller {
     public ResponseEntity saveTask(@RequestBody String json) {
         Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         Task task = gson.fromJson(json, Task.class);
+        switch (task.getPriority()){
+            case "Низкий": task.setPriority("1");break;
+            case "Средний": task.setPriority("2");break;
+            case "Высокий": task.setPriority("3");break;
+        }
         taskRepository.save(task);
         JSONObject obj = new JSONObject(json);
         JSONArray arr = obj.getJSONArray("subtasks");
+
 
         ArrayList<Subtask> subtasks = new ArrayList<>();
         for (int i = 0; i < arr.length(); i++) {

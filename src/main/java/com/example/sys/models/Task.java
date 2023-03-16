@@ -19,6 +19,8 @@ public class Task {
     private int taskId;
     @Column(name = "description")
     private String description;
+    @Column(name = "priority")
+    private String priority;
     @Column(name = "date")
     private Timestamp date;
     @Column(name = "date_start")
@@ -28,6 +30,14 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "status", referencedColumnName = "status_id")
     private Status statusId;
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
 
     public Status getStatusId() {
         return statusId;

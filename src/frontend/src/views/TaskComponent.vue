@@ -10,22 +10,33 @@
                 <span class="text">Статус</span>
                 <span class="text">Дата создания</span>
                 <span class="text">Создано</span>
+                <span class="text" v-if="this.priveleges === 'User'">Приоритет</span>
+                <span class="text" v-if="this.priveleges === 'User'">Исполнитель</span>
+                <span class="text" v-if="this.priveleges === 'User'">Дата начала и окончания</span>
               </div>
               <div class="column2">
                 <span :class="changeColor(status)" name="status">{{ status }}</span>
                 <span class="text">{{ this.task.date.substring(0, 10) }}</span>
                 <span class="text">{{ name }} {{ lastName }}</span>
+                <span class="text" v-if="this.priveleges === 'User'" :style="{'color': changeColorPriority(task.priority)}">{{ task.priority }}</span>
+                <span class="text" v-if="this.priveleges === 'User'">{{ selectedEmployee.name }} {{ selectedEmployee.lastName }}</span>
+                <span class="text" v-if="this.priveleges === 'User'">{{ task.dateStart }} ~ {{ task.dateEnd }}</span>
               </div>
             </div>
-            <span class="text">Исполнитель</span>
-            <select v-model="selectedEmployee" :disabled="disable" class="selector" required>
+            <span class="text" v-if="this.priveleges === 'Admin'">Приоритет</span>
+            <select v-if="this.priveleges === 'Admin'" v-model="this.task.priority" class="selector" required>
+
+              <option v-for="priority in priorities" :key="priority" :value="priority">{{ priority }}</option>
+            </select>
+            <span class="text" v-if="this.priveleges === 'Admin'">Исполнитель</span>
+            <select v-if="this.priveleges === 'Admin'" v-model="selectedEmployee" class="selector" required>
               <option v-for="user in employee" :key="user.employeeId" :value="user">{{ user.name }} {{
                   user.lastName
                 }}
               </option>
             </select>
-            <span class="text">Дата начала и окончания</span>
-            <date-picker v-model:value="date" :disabled="disable" aria-required="true" class="date-picker" format="DD-MM-YYYY"
+            <span v-if="this.priveleges === 'Admin'" class="text">Дата начала и окончания</span>
+            <date-picker v-if="this.priveleges === 'Admin'" v-model:value="date" aria-required="true" class="date-picker" format="DD-MM-YYYY"
                          range type="date" value-type="format" :disabled-date="disabledBeforeTodayAndWeekEnd" ></date-picker>
             <span class="text">Описание</span>
             <textarea v-model="task.description" class="input description" type="text"></textarea>
@@ -83,7 +94,8 @@ export default {
         description: '',
         statusId: '',
         date: '',
-        userId: JSON.parse(localStorage.getItem('user'))
+        userId: JSON.parse(localStorage.getItem('user')),
+        priority:''
       },
       employee: [],
       subtasks: [],
@@ -93,7 +105,8 @@ export default {
       stat: '',
       newTask: '',
       name: '',
-      lastName: ''
+      lastName: '',
+      priorities:['Низкий', 'Средний','Высокий']
     }
   },
   async mounted() {
@@ -151,6 +164,13 @@ export default {
         }
       })
 
+    },
+    changeColorPriority(priority) {
+      switch (priority){
+        case 'Низкий': return 'green';
+        case 'Средний': return 'orange';
+        case 'Высокий': return 'red';
+      }
     },
     changeColor(status) {
       if (status == 'Выполняется') {

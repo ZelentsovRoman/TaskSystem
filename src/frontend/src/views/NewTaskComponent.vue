@@ -12,6 +12,11 @@
                 }}
               </option>
             </select>
+            <span class="text">Приоритет</span>
+            <select v-model="this.task.priority" class="selector" required>
+
+              <option v-for="priority in priorities" :key="priority" :value="priority">{{ priority }}</option>
+            </select>
             <span class="text">Дата начала и окончания</span>
             <date-picker v-model:value="date" aria-required="true" class="date-picker" format="DD-MM-YYYY" range
                          type="date" value-type="format" :disabled-date="disabledBeforeTodayAndWeekEnd"></date-picker>
@@ -70,6 +75,7 @@ export default {
         dateEnd: '',
         employeeId: '',
         description: '',
+        priority:'',
         statusId: '',
         date: '',
         subtasks: [],
@@ -79,6 +85,7 @@ export default {
       selectedEmployee: [],
       stat: '',
       last: '',
+      priorities:['Низкий', 'Средний','Высокий']
     }
   },
   async mounted() {
