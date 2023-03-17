@@ -1,0 +1,83 @@
+h1 {
+  font-size: 20pt;
+  margin-left: 3.5rem;
+}
+
+.home-tab {
+  background-color: #ffffff;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  flex-grow: 2;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  margin-right: 0.5rem;
+}
+
+.col1 {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.col2 {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.tab-desc, .tab-date, .tab-datestart, .tab-dateend, .tab-employee, .tab-status {
+  display: flex;
+  //flex: 1 1 0%;
+  flex-direction: column;
+  min-width: 0px;
+  padding: 20px 20px 0px;
+  margin-bottom: 1rem;
+}
+
+.tab-num {
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 2rem;
+}
+
+.desc, .datestart, .dateend, .employee, span[name="status"] {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 0px;
+  margin-bottom: 1rem;
+  white-space: nowrap;
+  text-overflow: fade;
+  overflow: hidden;
+  width: 10rem;
+}
+
+
+.left {
+  display: flex;
+  flex-direction: row;
+  flex-basis: auto;
+  margin-left: 3rem;
+}
+
+.right {
+  display: flex;
+  flex-direction: row;
+  flex-basis: auto;
+  margin-right: 3rem;
+}
+
+.home {
+  display: block;
+  grid-template-columns: 1fr 1fr;
+  flex-direction: column;
+  align-items: stretch;
+  flex-grow: 5;
+}
+
+.main {
+  display: block;
+  flex-direction: column;
+  margin-top: 4rem;
+}
