@@ -51,7 +51,7 @@ export default {
           }
       ).then(async response => {
             const user = await response.json();
-            if (user == 'NOT_FOUND') {
+            if (response.status === 404) {
               this.text = 'Неверный логин или пароль'
             } else {
               localStorage.setItem('user', JSON.stringify(user))

@@ -115,7 +115,11 @@ router.beforeEach(async (to, from, next) => {
             }
         ).then(async response => {
             const str = JSON.stringify(await response.json())
-            localStorage.setItem('user', str)
+            if(response.status==404){
+                localStorage.clear()
+                next({name:'Login'})
+                location.reload()
+            }else localStorage.setItem('user', str)
         })
     }
     next()
