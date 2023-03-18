@@ -74,8 +74,7 @@ export default {
     }
   },
   mounted() {
-    if (JSON.parse(localStorage.getItem('user')).employee.privileges === 'Admin') {
-      fetch("/api/TaskForAdmin", {
+      fetch("/api/allTasks", {
         body: localStorage.getItem('user'),
         headers: {
           'Content-Type': 'application/json'
@@ -89,22 +88,6 @@ export default {
               this.tasks.description = "Отсутствует"
             }
           })
-    } else {
-      fetch("/api/TaskForUser", {
-        body: localStorage.getItem('user'),
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        method: "post"
-      })
-          .then((response) => response.json())
-          .then((data) => {
-            this.tasks = data;
-            if (this.tasks.description === null) {
-              this.tasks.description = "Отсутствует"
-            }
-          })
-    }
   },
   methods: {
     changeColor(status) {
