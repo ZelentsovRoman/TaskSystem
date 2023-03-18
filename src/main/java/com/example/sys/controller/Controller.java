@@ -105,27 +105,12 @@ public class Controller {
                 task.getDescription(), task.getDate(), task.getDateStart(), task.getDateEnd(), task.getEmployeeId(), task.getStatusId(), task.getPriority(), task.getUserId());
         JSONObject obj = new JSONObject(json);
         JSONArray arr = obj.getJSONArray("subtasks");
-
         ArrayList<Subtask> subtasks = new ArrayList<>();
         for (int i = 0; i < arr.length(); i++) {
             subtasks.add(new Gson().fromJson(arr.get(i).toString(), Subtask.class));
         }
         for (Subtask subtask : subtasks) {
             subtask.setTaskId(newtask.getTaskId());
-        }
-        ArrayList<Subtask> fromDB = subtaskRepository.findAllByTaskIdOrderBySubtaskId(newtask.getTaskId());
-        ArrayList<Integer> ids = new ArrayList<>();
-        for (Subtask sub : subtasks) {
-            sub.setTaskId(newtask.getTaskId());
-            ids.add(sub.getSubtaskId());
-        }
-        for (Subtask sub : fromDB) {
-            if (!ids.contains(sub.getSubtaskId())) {
-                subtaskRepository.deleteById(sub.getSubtaskId());
-            }
-        }
-        if (subtasks.size() == 0) {
-            subtaskRepository.deleteByTaskId(newtask.getTaskId());
         }
         subtaskRepository.saveAll(subtasks);
         return ResponseEntity.ok(HttpStatus.OK);
