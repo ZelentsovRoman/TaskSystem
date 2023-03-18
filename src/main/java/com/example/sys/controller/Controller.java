@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -40,35 +41,16 @@ public class Controller {
         } else return new Gson().toJson(findedUser);
     }
 
-    @GetMapping("/allTasks")
-    public String getTasks() {
-        ArrayList<Task> list = taskRepository.findAllByOrderByTaskId();
-        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
-        String json = gson.toJson(list);
-        return json;
-    }
 
-    @PostMapping("/TaskForAdmin")
+    @PostMapping("/allTasks")
     public String getTasksForAdmin(@RequestBody String json) {
         User user = new Gson().fromJson(json, User.class);
-        ArrayList<Task> list = taskRepository.findAllByCompanyIdOrderByPriorityDescTaskIdAsc(user.getEmployee().getCompany().getCompanyId());
-        for(Task task: list){
-            switch (task.getPriority()){
-                case "1": task.setPriority("Низкий");break;
-                case "2": task.setPriority("Средний");break;
-                case "3": task.setPriority("Высокий");break;
-            }
+        ArrayList<Task> list = new ArrayList<>();
+        if(Objects.equals(user.getEmployee().getPrivileges(), "Admin")){
+            list = taskRepository.findAllByCompanyIdOrderByPriorityDescTaskIdAsc(user.getEmployee().getCompany().getCompanyId());
+        } else {
+            list = taskRepository.findAllByEmployeeIdOrderByPriorityDescTaskIdAsc(user.getEmployee());
         }
-        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
-        String Jsonlist = gson.toJson(list);
-        return Jsonlist;
-    }
-
-    @PostMapping("/TaskForUser")
-
-    public String getTasksForUser(@RequestBody String json) {
-        User user = new Gson().fromJson(json, User.class);
-        ArrayList<Task> list = taskRepository.findAllByEmployeeIdOrderByPriorityDescTaskIdAsc(user.getEmployee());
         for(Task task: list){
             switch (task.getPriority()){
                 case "1": task.setPriority("Низкий");break;
