@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -31,11 +32,11 @@ public class Controller {
     private StatusRepository statusRepository;
 
     @PostMapping("/auth")
-    public Object auth(@RequestBody String json) {
+    public String auth(@RequestBody String json) {
         User user = new Gson().fromJson(json, User.class);
         User findedUser = userRepository.findByLoginAndPassword(user.getLogin(), user.getPassword());
         if (findedUser == null) {
-            return HttpStatus.NOT_FOUND;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found");
         } else return new Gson().toJson(findedUser);
     }
 
@@ -239,7 +240,9 @@ public class Controller {
     @PostMapping("/update")
     public String update(@RequestBody String json) {
         User user = new Gson().fromJson(json, User.class);
-        return new Gson().toJson(userRepository.findByUserId(user.getUserId()));
+        if(userRepository.findByUserId(user.getUserId())!=null){
+            return new Gson().toJson(userRepository.findByUserId(user.getUserId()));
+        } else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found");
     }
 
     @PostMapping("/findUser")
