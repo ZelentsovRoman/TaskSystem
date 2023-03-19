@@ -91,31 +91,6 @@ public class Controller {
         return json;
     }
 
-    @PostMapping("/saveNewTask")
-    public ResponseEntity saveNewTask(@RequestBody String json) {
-        Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
-        Task task = gson.fromJson(json, Task.class);
-        switch (task.getPriority()){
-            case "Низкий": task.setPriority("1");break;
-            case "Средний": task.setPriority("2");break;
-            case "Высокий": task.setPriority("3");break;
-        }
-        taskRepository.save(task);
-        Task newtask = taskRepository.findFirstByDescriptionAndDateAndDateStartAndDateEndAndEmployeeIdAndStatusIdAndPriorityAndUserIdOrderByTaskId(
-                task.getDescription(), task.getDate(), task.getDateStart(), task.getDateEnd(), task.getEmployeeId(), task.getStatusId(), task.getPriority(), task.getUserId());
-        JSONObject obj = new JSONObject(json);
-        JSONArray arr = obj.getJSONArray("subtasks");
-        ArrayList<Subtask> subtasks = new ArrayList<>();
-        for (int i = 0; i < arr.length(); i++) {
-            subtasks.add(new Gson().fromJson(arr.get(i).toString(), Subtask.class));
-        }
-        for (Subtask subtask : subtasks) {
-            subtask.setTaskId(newtask.getTaskId());
-        }
-        subtaskRepository.saveAll(subtasks);
-        return ResponseEntity.ok(HttpStatus.OK);
-    }
-
     @PostMapping("/saveTask")
     public ResponseEntity saveTask(@RequestBody String json) {
         Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
@@ -125,27 +100,33 @@ public class Controller {
             case "Средний": task.setPriority("2");break;
             case "Высокий": task.setPriority("3");break;
         }
+        int idBefore=task.getTaskId();
         taskRepository.save(task);
         JSONObject obj = new JSONObject(json);
         JSONArray arr = obj.getJSONArray("subtasks");
-
-
         ArrayList<Subtask> subtasks = new ArrayList<>();
         for (int i = 0; i < arr.length(); i++) {
             subtasks.add(new Gson().fromJson(arr.get(i).toString(), Subtask.class));
         }
-        ArrayList<Subtask> fromDB = subtaskRepository.findAllByTaskIdOrderBySubtaskId(task.getTaskId());
-        ArrayList<Integer> ids = new ArrayList<>();
-        for (Subtask sub : subtasks) {
-            ids.add(sub.getSubtaskId());
-        }
-        for (Subtask sub : fromDB) {
-            if (!ids.contains(sub.getSubtaskId())) {
-                subtaskRepository.deleteById(sub.getSubtaskId());
+        if(idBefore==0) {
+            for (Subtask subtask : subtasks) {
+                subtask.setTaskId(task.getTaskId());
             }
-        }
-        if (subtasks.size() == 0) {
-            subtaskRepository.deleteByTaskId(task.getTaskId());
+        } else {
+            ArrayList<Subtask> fromDB = subtaskRepository.findAllByTaskIdOrderBySubtaskId(task.getTaskId());
+            ArrayList<Integer> ids = new ArrayList<>();
+            for (Subtask sub : subtasks) {
+                ids.add(sub.getSubtaskId());
+            }
+            if (subtasks.size() == 0) {
+                subtaskRepository.deleteByTaskId(task.getTaskId());
+            } else {
+                for (Subtask sub : fromDB) {
+                    if (!ids.contains(sub.getSubtaskId())) {
+                        subtaskRepository.deleteById(sub.getSubtaskId());
+                    }
+                }
+            }
         }
         subtaskRepository.saveAll(subtasks);
         return ResponseEntity.ok(HttpStatus.OK);
