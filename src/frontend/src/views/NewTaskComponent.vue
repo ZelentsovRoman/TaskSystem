@@ -143,7 +143,7 @@ export default {
           this.task.statusId = this.stat[1]
         } else this.task.statusId = this.stat[0]
         this.task = JSON.stringify(this.task, null, 2)
-        await fetch("/api/saveNewTask", {
+        await fetch("/api/saveTask", {
               body: this.task,
               headers: {
                 'Content-Type': 'application/json'
