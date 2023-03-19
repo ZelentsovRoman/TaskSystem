@@ -18,8 +18,11 @@
                 <span :class="changeColor(status)" name="status">{{ status }}</span>
                 <span class="text">{{ this.task.date.substring(0, 10) }}</span>
                 <span class="text">{{ name }} {{ lastName }}</span>
-                <span class="text" v-if="this.priveleges === 'User'" :style="{'color': changeColorPriority(task.priority)}">{{ task.priority }}</span>
-                <span class="text" v-if="this.priveleges === 'User'">{{ selectedEmployee.name }} {{ selectedEmployee.lastName }}</span>
+                <span class="text" v-if="this.priveleges === 'User'"
+                      :style="{'color': changeColorPriority(task.priority)}">{{ task.priority }}</span>
+                <span class="text" v-if="this.priveleges === 'User'">{{
+                    selectedEmployee.name
+                  }} {{ selectedEmployee.lastName }}</span>
                 <span class="text" v-if="this.priveleges === 'User'">{{ task.dateStart }} ~ {{ task.dateEnd }}</span>
               </div>
             </div>
@@ -36,8 +39,10 @@
               </option>
             </select>
             <span v-if="this.priveleges === 'Admin'" class="text">Дата начала и окончания</span>
-            <date-picker v-if="this.priveleges === 'Admin'" v-model:value="date" aria-required="true" class="date-picker" format="DD-MM-YYYY"
-                         range type="date" value-type="format" :disabled-date="disabledBeforeTodayAndWeekEnd" ></date-picker>
+            <date-picker v-if="this.priveleges === 'Admin'" v-model:value="date" aria-required="true"
+                         class="date-picker" format="DD-MM-YYYY"
+                         range type="date" value-type="format"
+                         :disabled-date="disabledBeforeTodayAndWeekEnd"></date-picker>
             <span class="text">Описание</span>
             <textarea v-model="task.description" class="input description" type="text"></textarea>
             <div class="subtasks">
@@ -50,7 +55,8 @@
                           @click="deleteSubtask(subtaskId)">clear
                   </button>
                 </div>
-                <button name="add" type="button" @click="addSubtask" v-if="priveleges==='Admin'">Добавить подзадачу</button>
+                <button name="add" type="button" @click="addSubtask" v-if="priveleges==='Admin'">Добавить подзадачу
+                </button>
               </div>
               <div class="buttons">
                 <button class="back" @click="navigate">Назад</button>
@@ -95,7 +101,7 @@ export default {
         statusId: '',
         date: '',
         userId: JSON.parse(localStorage.getItem('user')),
-        priority:''
+        priority: ''
       },
       employee: [],
       subtasks: [],
@@ -106,7 +112,7 @@ export default {
       newTask: '',
       name: '',
       lastName: '',
-      priorities:['Низкий', 'Средний','Высокий']
+      priorities: ['Низкий', 'Средний', 'Высокий']
     }
   },
   async mounted() {
@@ -131,23 +137,19 @@ export default {
     fetch("/api/getTask/" + this.$route.params.id)
         .then((response) => response.json())
         .then((data) => {
+          console.log(data)
           this.task = data
           this.name = this.task.userId.employee.name
           this.lastName = this.task.userId.employee.lastName
           this.selectedEmployee = this.task.employeeId
           this.status = this.task.statusId.status
+          this.subtasks = this.task.subtasks
           this.date.push(this.task.dateStart, this.task.dateEnd)
-        }).then(
-        fetch("/api/getSubtasks/" + this.$route.params.id)
-            .then((response) => response.json())
-            .then((data) => {
-              this.subtasks = data
-            })
-    )
+        })
   },
   methods: {
     disabledBeforeTodayAndWeekEnd(date) {
-      return date < new Date(new Date().setHours(0, 0, 0, 0)) || date.getDay()===0 || date.getDay()===6;
+      return date < new Date(new Date().setHours(0, 0, 0, 0)) || date.getDay() === 0 || date.getDay() === 6;
     },
     async deleteTask(e) {
       e.preventDefault()
@@ -166,10 +168,13 @@ export default {
 
     },
     changeColorPriority(priority) {
-      switch (priority){
-        case 'Низкий': return 'green';
-        case 'Средний': return 'orange';
-        case 'Высокий': return 'red';
+      switch (priority) {
+        case 'Низкий':
+          return 'green';
+        case 'Средний':
+          return 'orange';
+        case 'Высокий':
+          return 'red';
       }
     },
     changeColor(status) {
@@ -193,7 +198,7 @@ export default {
     },
     async submit(e) {
       e.preventDefault()
-      if (this.date[0] !== undefined && this.date[0]!==null) {
+      if (this.date[0] !== undefined && this.date[0] !== null) {
         this.newTask = this.task
         this.newTask.dateStart = this.date[0]
         this.newTask.dateEnd = this.date[1]

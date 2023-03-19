@@ -81,7 +81,12 @@ public class Controller {
         }
         Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         String json = gson.toJson(task);
-        return json;
+        ArrayList<Subtask> subtasks = subtaskRepository.findAllByTaskIdOrderBySubtaskId(id);
+        String subs = new Gson().toJson(subtasks);
+        JSONObject obj = new JSONObject(json);
+        JSONArray arr = new JSONArray(subs);
+        obj.put("subtasks",arr);
+        return obj.toString();
     }
 
     @GetMapping("/getSubtasks/{id}")
@@ -93,6 +98,7 @@ public class Controller {
 
     @PostMapping("/saveTask")
     public ResponseEntity saveTask(@RequestBody String json) {
+        System.out.println(json);
         Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         Task task = gson.fromJson(json, Task.class);
         switch (task.getPriority()){
