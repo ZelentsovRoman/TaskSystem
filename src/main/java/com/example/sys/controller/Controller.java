@@ -98,7 +98,6 @@ public class Controller {
 
     @PostMapping("/saveTask")
     public ResponseEntity saveTask(@RequestBody String json) {
-        System.out.println(json);
         Gson gson = new GsonBuilder().setDateFormat("dd-MM-yyyy").create();
         Task task = gson.fromJson(json, Task.class);
         switch (task.getPriority()){
