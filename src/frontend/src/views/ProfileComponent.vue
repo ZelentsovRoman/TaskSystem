@@ -56,7 +56,7 @@ export default {
         const check = await checkUser.json()
         if (check !== null) {
           if (check.login === this.user.login) {
-            this.text = 'Пользователь с таим логином уже существует'
+            this.text = 'Пользователь с таким логином уже существует'
           } else {
             this.save()
           }
